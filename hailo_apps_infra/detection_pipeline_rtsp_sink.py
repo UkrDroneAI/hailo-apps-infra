@@ -33,6 +33,11 @@ def RTSP_SINK_PIPELINE(sync='true', name='hailo_rtsp', hight='1080', width='1920
     """
     Creates a GStreamer pipeline string for streaming the video.
     It includes the hailooverlay plugin to draw bounding boxes and labels on the video.
+    
+    Requirements:
+    - sudo apt-get install gstreamer1.0-plugins-ugly
+    - sudo apt install gstreamer1.0-rtsp
+    - download and run mediamtx - https://github.com/bluenviron/mediamtx/releases
 
     Args:
         sync (str, optional): The sync property for the video sink. Defaults to 'true'.
@@ -48,8 +53,6 @@ def RTSP_SINK_PIPELINE(sync='true', name='hailo_rtsp', hight='1080', width='1920
         f'videoconvert name={name}_videoconvert n-threads=2 qos=false ! '
         f'videoscale ! video/x-raw,format=NV12,width={width},height={hight} !'
         f'{QUEUE(name=f"{name}_q")} ! '
-        # f'omxh264enc ! video/x-h264,profile=baseline ! rtph264pay name=pay0 pt=96'
-        # f'videoconvert ! videoscale ! video/x-raw,format=NV12,width=640,height=480 ! x264enc speed-preset=veryfast tune=zerolatency bitrate=800 ! rtspclientsink location=rtsp://localhost:8554/test'
         f'x264enc speed-preset=veryfast tune=zerolatency bitrate=800 ! rtspclientsink location=rtsp://localhost:8554/test'
     )
 
