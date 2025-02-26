@@ -29,7 +29,7 @@ from hailo_apps_infra.gstreamer_app import (
     dummy_callback
 )
 
-def RTSP_SINK_PIPELINE(sync='true', name='hailo_rtsp', hight='1080', width='1920'):
+def RTSP_SINK_PIPELINE(sync='true', name='hailo_rtsp', hight='480', width='640'):
     """
     Creates a GStreamer pipeline string for streaming the video.
     It includes the hailooverlay plugin to draw bounding boxes and labels on the video.
@@ -51,7 +51,9 @@ def RTSP_SINK_PIPELINE(sync='true', name='hailo_rtsp', hight='1080', width='1920
         f'{OVERLAY_PIPELINE(name=f"{name}_overlay")} ! '
         f'{QUEUE(name=f"{name}_videoconvert_q")} ! '
         f'videoconvert name={name}_videoconvert n-threads=2 qos=false ! '
-        f'videoscale ! video/x-raw,format=NV12,width={width},height={hight} !'
+        # f'videoscale ! video/x-raw,format=NV12,width={width},height={hight} !'
+        f'videoscale ! video/x-raw,width={width},height={hight} !'
+        f'videorate ! video/x-raw,framerate=15/1 !'
         f'{QUEUE(name=f"{name}_q")} ! '
         f'x264enc speed-preset=veryfast tune=zerolatency bitrate=800 ! rtspclientsink location=rtsp://localhost:8554/test'
     )
