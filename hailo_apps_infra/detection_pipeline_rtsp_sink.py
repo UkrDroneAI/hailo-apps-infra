@@ -55,7 +55,8 @@ def RTSP_SINK_PIPELINE(sync='true', name='hailo_rtsp', hight='480', width='640')
         f'videoscale ! video/x-raw,width={width},height={hight} !'
         f'videorate ! video/x-raw,framerate=15/1 !'
         f'{QUEUE(name=f"{name}_q")} ! '
-        f'x264enc speed-preset=veryfast tune=zerolatency bitrate=800 ! rtspclientsink location=rtsp://localhost:8554/test'
+        # f'x264enc speed-preset=veryfast tune=zerolatency bitrate=800 ! rtspclientsink location=rtsp://localhost:8554/test'
+        f'x264enc speed-preset=veryfast tune=zerolatency ! rtph264pay config-interval=-1 ! udpsink host=127.0.0.1 port=5602 sync=false'
     )
 
     return display_pipeline
@@ -66,16 +67,19 @@ def RTSP_SINK_PIPELINE(sync='true', name='hailo_rtsp', hight='480', width='640')
 
 # This class inherits from the hailo_rpi_common.GStreamerApp class
 class GStreamerDetectionApp(GStreamerApp):
-    def __init__(self, app_callback, user_data):
-        parser = get_default_parser()
+    def __init__(self, app_callback, user_data, parser=None):
+        
+        if parser == None:
+            parser = get_default_parser()
         parser.add_argument(
             "--labels-json",
             default=None,
             help="Path to costume labels JSON file",
         )
-        args = parser.parse_args()
+        
         # Call the parent class constructor
-        super().__init__(args, user_data)
+        super().__init__(parser, user_data)
+        
         # Additional initialization code can be added here
         # Set Hailo parameters these parameters should be set based on the model used
         self.batch_size = 2
@@ -84,29 +88,29 @@ class GStreamerDetectionApp(GStreamerApp):
 
 
         # Determine the architecture if not specified
-        if args.arch is None:
+        if self.options_menu.arch is None:
             detected_arch = detect_hailo_arch()
             if detected_arch is None:
                 raise ValueError("Could not auto-detect Hailo architecture. Please specify --arch manually.")
             self.arch = detected_arch
             print(f"Auto-detected Hailo architecture: {self.arch}")
         else:
-            self.arch = args.arch
-
-
-        if args.hef_path is not None:
-            self.hef_path = args.hef_path
+            self.arch = self.options_menu.arch
+            
+        if self.options_menu.hef_path is not None:
+            self.hef_path = self.options_menu.hef_path
         # Set the HEF file path based on the arch
         elif self.arch == "hailo8":
-            self.hef_path = os.path.join(self.current_path, '../resources/yolov8m.hef')
+            self.hef_path = os.path.join(self.current_path, '../resources/yolov6n.hef')
         else:  # hailo8l
-            self.hef_path = os.path.join(self.current_path, '../resources/yolov8s_h8l.hef')
+            self.hef_path = os.path.join(self.current_path, '../resources/yolov6n_h8l.hef')
+
 
         # Set the post-processing shared object file
         self.post_process_so = os.path.join(self.current_path, '../resources/libyolo_hailortpp_postprocess.so')
-        self.post_function_name = "filter_letterbox"
+        self.post_function_name = "filter"
         # User-defined label JSON file
-        self.labels_json = args.labels_json
+        self.labels_json = self.options_menu.labels_json
 
         self.app_callback = app_callback
 
