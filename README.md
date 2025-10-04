@@ -1,77 +1,112 @@
-![](doc/images/github_applications_infrastructure.png)
-# Hailo Applications Infrastructure
+![Hailo Applications Infrastructure](doc/images/github_applications_infrastructure.png)
 
-This repository provides the core infrastructure and pipelines required to run Hailo application examples.
-It is built to be used on multiple platforms, including Raspberry Pi 4 and 5, and x86_64 and aarch64 Ubuntu machines.
-It includes ready-made pipelines for running detection, pose estimation, and instance segmentation examples. It includes common building block and utilities:
-- Gstreamer Application class
-- Gstreamer pipeline helper functions
-- Post processing scripts
-- Hailo HEF file loader
+# Hailo Applications
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/hailo-ai/hailo-apps-infra)
 
-The infrastructure is aimed to provide tools for developers who want to create their own custom pipelines and applications. It can be 'pip installed' as a dependency in your own projects.
-See more information in our [Development Guide](./doc/development_guide.md).
+Welcome to the Hailo Applications repository! This project provides a foundational infrastructure, reusable components, and practical examples for building and deploying high-performance AI applications using Hailo hardware accelerators.
 
-For more general information and support visit the [Hailo Official Website](https://hailo.ai/) and [Hailo Community Forum](https://community.hailo.ai/).
+It includes everything you need to get started with computer vision pipelines on both x86_64 Ubuntu systems and Raspberry Pi platforms.
 
-## Hailo examples code structure
-`hailo-app-infra` is used as a dependency in other Hailo examples repositories. The following diagram shows the code structure of the Hailo examples repositories:
-![hailo_examples_code_structure](doc/images/hailo_examples_code_structure.svg)
+- **Ready-to-use AI pipelines** for object detection, pose estimation, and more.
+- **Modular infrastructure** for rapid development and custom applications.
+- **Packaged as a Python library** for easy integration into your own projects.
 
-## Hailo Requirements
-This repo requires Hailo's tools to be installed.
-All the required packages can be found in [Hailo developer Zone SW downloads](https://hailo.ai/developer-zone/software-downloads/)
-For Raspberry Pi users we have it all integrated in Raspberry Pi OS and apt server. See [Raspbery Pi installation Guide](https://github.com/hailo-ai/hailo-rpi5-examples/blob/main/doc/install-raspberry-pi5.md) on `hailo-rpi5-examples` repo for more information.
+Visit the [Hailo Official Website](https://hailo.ai/) and [Hailo Community Forum](https://community.hailo.ai/) for more information.
 
-Required packages:
-- HailoRT driver (deb package)
-- HailoRT (deb package)
-- HailoRT Python API (whl package)
-- TAPPAS (Installer) or tappas-core (deb package)
-- TAPPAS Python API (whl package)
+## Getting Started
 
-## Using the Repository as a Pip Package
------------------------------
-To install the package, ensure you are inside a virtual environment with Hailo requirements installed. Then, run the following command:
-```shell script
-pip install git+https://github.com/hailo-ai/hailo-apps-infra.git
-```
-This will install the Hailo Applications Infrastructure package directly from the repository.
 
-## Working Locally
-To make changes and work with the code locally you can clone the repository and install it in editable mode:
-```shell script
+### Hardware and Software Installation
+
+For detailed instructions on setting up your hardware, including both x86_64 Ubuntu systems and Raspberry Pi devices, please refer to the [Full Installation Guide](./doc/user_guide/installation.md#quick-start-automated-recommended). This guide covers everything from hardware setup to software installation, ensuring your environment is ready for deploying AI applications with Hailo hardware accelerators.
+
+
+### Hailo Apps Installation
+Get up and running in minutes with the automated installation script.
+```bash
+# Clone the repository
 git clone https://github.com/hailo-ai/hailo-apps-infra.git
-pip install --force-reinstall -v -e .
+cd hailo-apps-infra
+
+# Run the installer
+./install.sh
 ```
-`--force-reinstall` is required to reinstall the package if it was already installed. By the hailo-rpi5-examples repository, for example. As part of the installation flow.
 
-## Running the Pipelines
---------------------
-The pipelines should be be imported and wrapped with your own application logic.
-See examples in [Hailo RPi5 examples repo](https://github.com/hailo-ai/hailo-rpi5-examples/blob/main/README.md)
+### Running Applications
 
-## Hailo Raspberry Pi Common Utilities
-[Hailo Raspberry Pi Common Utilities](doc/development_guide.md)
+Here are a few of the ready-to-use applications included in this repository.
+Before running any application, ensure you activate the Python virtual environment created during installation. This ensures all dependencies are correctly loaded.
 
-## Contributing
+**Setup environment:**
 
-We welcome contributions from the community. You can contribute by:
-1. Contribute to our Community projects directories on other repos:
-   1. [Hailo RPi5 examples Community Projects](https://github.com/hailo-ai/hailo-rpi5-examples/tree/main/community_projects/community_projects.md)
-   2. [Hailo CLIP Community Projects](https://github.com/hailo-ai/hailo-CLIP/community_projects/community_projects.md)
-2. PRs to this repo will not be accepted.
-3. Reporting issues and bugs.
-4. Suggesting new features or improvements.
-5. Joining the discussion on the [Hailo Community Forum](https://community.hailo.ai/).
+This should be run on every new terminal session.
+```bash
+source setup_env.sh
+```
 
-License
-----------
-The infrastructure is released under the MIT license. Please see the [LICENSE](LICENSE) file for more information.
+Additionally, in the common case of a Raspberry Pi connected remotely via SSH, add:
+```bash
+export DISPLAY=:0
+```
 
+#### Simple Object Detection
+A lightweight version focused on demonstrating raw Hailo performance with minimal CPU overhead.
 
-Disclaimer
-----------
-This code infrastructure is provided by Hailo solely on an “AS IS” basis and “with all faults”. No responsibility or liability is accepted or shall be imposed upon Hailo regarding the accuracy, merchantability, completeness or suitability of the code infrastructure. Hailo shall not have any liability or responsibility for errors or omissions in, or any business decisions made by you in reliance on this code infrastructure or any part of it. If an error occurs when running this infrastructure, please open a ticket in the "Issues" tab.
+**Command:**
+```bash
+hailo-detect-simple
+```
+**Output:**
 
-This infrastructure was tested on specific versions and we can only guarantee the expected results using the exact version mentioned above on the exact environment. The infrastructure might work for other versions, other environment or other HEF file, but there is no guarantee that it will.
+![Detection Example](doc/images/detection.gif)
+
+#### Full Object Detection
+A comprehensive detection application featuring object tracking and resolution scaling.
+
+**Command:**
+```bash
+hailo-detect
+```
+
+#### Pose Estimation
+Detects human pose keypoints (e.g., joints and limbs) in real-time.
+
+**Command:**
+```bash
+hailo-pose
+```
+**Output:**
+
+![Pose Estimation Example](doc/images/pose_estimation.gif)
+
+#### Instance Segmentation
+Provides pixel-level masks for each detected object.
+
+**Command:**
+```bash
+hailo-seg
+```
+**Output:**
+
+![Instance Segmentation Example](doc/images/instance_segmentation.gif)
+
+For a complete list of all available applications and their features, please see the [Running Applications Guide](./doc/user_guide/running_applications.md).
+
+## Full Documentation
+
+For detailed guides on installation, usage, and development, please see our complete documentation:
+
+**[➡️ View the Full Documentation](./doc/README.md)**
+
+The documentation includes:
+*   **[User Guide](./doc/user_guide/README.md)**: How to run applications and configure the system.
+*   **[Developer Guide](./doc/developer_guide/README.md)**: How to build your own applications.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for complete details.
+
+## Getting Help
+
+If you run into any issues, the best place to get help is the [Hailo Community Forum](https://community.hailo.ai/). You can search for existing solutions or open a new topic to get help from the community and the Hailo team.
+
