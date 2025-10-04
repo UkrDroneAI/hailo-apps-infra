@@ -1,0 +1,1 @@
+# GStreamer package initialization
