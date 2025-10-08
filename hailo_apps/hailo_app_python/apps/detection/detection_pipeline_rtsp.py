@@ -8,7 +8,7 @@ from hailo_apps.hailo_app_python.core.common.core import get_default_parser, get
 from hailo_apps.hailo_app_python.core.common.defines import DETECTION_APP_TITLE, DETECTION_PIPELINE, RESOURCES_MODELS_DIR_NAME, RESOURCES_SO_DIR_NAME, DETECTION_POSTPROCESS_SO_FILENAME, DETECTION_POSTPROCESS_FUNCTION
 from hailo_apps.hailo_app_python.core.gstreamer.gstreamer_helper_pipelines import SOURCE_PIPELINE, INFERENCE_PIPELINE, INFERENCE_PIPELINE_WRAPPER, TRACKER_PIPELINE, USER_CALLBACK_PIPELINE, DISPLAY_PIPELINE
 from hailo_apps.hailo_app_python.core.gstreamer.gstreamer_app import GStreamerApp, app_callback_class, dummy_callback
-from hailo_apps.hailo_app_python.core.gstreamer.gstreamer_rtsp_helper_pipelines import RTSP_SINK_PIPELINE
+from hailo_apps.hailo_app_python.core.gstreamer.gstreamer_rtsp_helper_pipelines import RTSP_SINK_PIPELINE, RTSP_SOURCE_PIPELINE
 # endregion imports
 
 
@@ -78,7 +78,7 @@ class GStreamerDetectionApp(GStreamerApp):
         self.create_pipeline()
 
     def get_pipeline_string(self):
-        source_pipeline = SOURCE_PIPELINE(video_source=self.video_source,
+        source_pipeline = RTSP_SOURCE_PIPELINE(video_source=self.video_source,
                                           video_width=self.video_width, video_height=self.video_height,
                                           frame_rate=self.frame_rate, sync=self.sync)
         detection_pipeline = INFERENCE_PIPELINE(
