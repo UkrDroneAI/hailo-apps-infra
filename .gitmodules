@@ -1,0 +1,3 @@
+[submodule "hailo_apps/hailo_app_python/apps/gstreamer-ardupilot"]
+	path = hailo_apps/hailo_app_python/apps/gstreamer-ardupilot
+	url = git@github.com:UkrDroneAI/gstreamer-ardupilot.git
