@@ -92,13 +92,15 @@ class GStreamerDetectionApp(GStreamerApp):
         tracker_pipeline = TRACKER_PIPELINE(class_id=1)
         user_callback_pipeline = USER_CALLBACK_PIPELINE()
         rtsp_sink_pipeline = RTSP_SINK_PIPELINE(sync=self.sync)
+        display_pipeline = DISPLAY_PIPELINE(video_sink=self.video_sink, sync=self.sync, show_fps=self.show_fps)
 
         pipeline_string = (
             f'{source_pipeline} ! '
             f'{detection_pipeline_wrapper} ! '
             f'{tracker_pipeline} ! '
             f'{user_callback_pipeline} ! '
-            f'{rtsp_sink_pipeline}'
+            f'{display_pipeline}'
+            # f'{rtsp_sink_pipeline}'
         )
         print(pipeline_string)
         return pipeline_string
