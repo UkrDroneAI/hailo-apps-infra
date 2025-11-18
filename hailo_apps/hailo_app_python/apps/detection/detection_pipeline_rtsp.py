@@ -51,6 +51,7 @@ class GStreamerDetectionApp(GStreamerApp):
             self.hef_path = self.options_menu.hef_path
         else:
             self.hef_path = get_resource_path(DETECTION_PIPELINE, RESOURCES_MODELS_DIR_NAME)
+        print(f"Using HEF path: {self.hef_path}")
 
 
             # Set the post-processing shared object file
