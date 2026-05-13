@@ -1,0 +1,83 @@
+{
+  "name": "GStreamer Infrastructure Development",
+  "image": "hailo8_ai_sw_suite_2025-10:1",
+  
+  // Configure container features
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  // NVIDIA GPU support
+  "runArgs": [
+    "--gpus=all",
+    "--ipc=host"
+  ],
+
+  // Environment variables for NVIDIA runtime and X11 forwarding
+  "containerEnv": {
+    "NVIDIA_VISIBLE_DEVICES": "all",
+    "NVIDIA_DRIVER_CAPABILITIES": "compute,utility",
+    "DISPLAY": "${localEnv:DISPLAY}"
+  },
+
+  // Mount the workspace
+  "workspaceFolder": "/local/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+
+  // VS Code/Cursor extensions
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "ms-python.autopep8",
+        "eamodio.gitlens",
+        "oderwat.indent-rainbow",
+        "ms-toolsai.jupyter",
+        "ms-toolsai.jupyter-cell-tags",
+        "ms-python.mypy-type-checker"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/local/workspace/hailo_virtualenv/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.ruffEnabled": true,
+        "python.formatting.provider": "none",
+        "python.analysis.typeCheckingMode": "basic",
+        "mypy-type-checker.importStrategy": "fromEnvironment",
+        "jupyter.askForKernelRestart": false,
+        "jupyter.interactiveWindow.creationMode": "perFile",
+        "notebook.codeActionsOnSave": {
+          "notebook.source.fixAll": "explicit",
+          "notebook.source.organizeImports": "explicit"
+        },
+        "[python]": {
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+          },
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        }
+      }
+    }
+  },
+
+  // Post-create command to install additional dependencies
+  "postCreateCommand": "pip install --upgrade pip && pip install ruff mypy",
+
+  // Configure port forwarding
+  "forwardPorts": [8888, 8080],
+
+  // User configuration
+  "remoteUser": "hailo",
+
+  // Security options
+  "privileged": true,
+
+  // Additional mounts for development
+  "mounts": [
+    "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"
+  ]
+
+}
